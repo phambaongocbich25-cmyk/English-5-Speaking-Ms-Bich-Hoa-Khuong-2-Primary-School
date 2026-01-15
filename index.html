@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>English 5 Speaking – Hoa Khuong 2</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  font-family:"Comic Sans MS",Arial,sans-serif;
+  background:linear-gradient(135deg,#e3f2fd,#ffffff);
+  margin:0;padding:16px
+}
+.container{
+  max-width:960px;margin:auto;
+  background:#fff;padding:20px;
+  border-radius:24px;
+  box-shadow:0 10px 30px rgba(0,0,0,.2)
+}
+h1,h2{text-align:center;color:#0d47a1}
+
+.card{
+  background:#f5fbff;
+  padding:16px;margin-top:16px;
+  border-radius:18px;
+  border:2px dashed #90caf9
+}
+
+input,select,textarea{
+  width:100%;padding:10px;
+  border-radius:12px;
+  border:2px solid #90caf9;
+  margin-top:6px;
+  font-size:15px
+}
+
+button{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  background:#1565c0;
+  color:white;
+  border:none;
+  border-radius:22px;
+  font-size:16px;
+  cursor:pointer
+}
+button:active{transform:scale(.97)}
+
+.unit-title{
+  background:#ffeb3b;
+  padding:8px;
+  border-radius:14px;
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:6px
+}
+
+/* 🔴 TỪ SAI – RÕ */
+.word-btn{
+  margin:6px;
+  padding:8px 14px;
+  border-radius:16px;
+  border:2px solid #c62828;
+  background:#ffcdd2;
+  color:#000;
+  font-weight:bold;
+  cursor:pointer
+}
+
+.star{font-size:26px;text-align:center}
+
+.certificate{
+  display:none;margin-top:22px;
+  padding:26px;border-radius:22px;
+  background:#fff;
+  border:6px double #fbc02d;
+  text-align:center
+}
+
+.school{font-size:22px;font-weight:bold}
+.cert-title{font-size:26px;color:#1565c0;margin:10px 0}
+.cert-name{font-size:24px;font-weight:bold}
+
+.sign{
+  display:flex;
+  justify-content:space-between;
+  margin-top:28px;
+  font-size:14px
+}
+
+.progress{
+  font-size:14px;
+  background:#e8f5e9;
+  padding:10px;
+  border-radius:12px;
+  margin-top:10px
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🎤 English 5 Speaking</h1>
+<h2>Hoa Khuong 2 Primary School</h2>
+
+<div class="card">
+  <input id="studentName" placeholder="Student name">
+  <input id="studentClass" placeholder="Class (5/1)">
+</div>
+
+<div class="card">
+  <select id="mode">
+    <option value="unit">Speaking by Unit (SGK)</option>
+    <option value="free">Free Speaking</option>
+  </select>
+</div>
+
+<div class="card">
+  <select id="unit"></select>
+  <div class="unit-title" id="unitTitle"></div>
+</div>
+
+<div class="card">
+  <textarea id="studentText" rows="3"
+  placeholder="Press the microphone and speak..."></textarea>
+  <button onclick="startSpeak()">🎙 Start speaking</button>
+</div>
+
+<div class="card">
+  <h3>🤖 AI Feedback</h3>
+  <div id="feedback"></div>
+</div>
+
+<div class="card">
+  <h3>📊 Student Progress</h3>
+  <div id="progress" class="progress"></div>
+</div>
+
+<div class="certificate" id="certificate">
+  <div class="school">HOA KHUONG 2 PRIMARY SCHOOL</div>
+  <div class="cert-title">CERTIFICATE OF ENGLISH SPEAKING</div>
+  <p>This certificate is proudly presented to</p>
+  <div class="cert-name" id="cName"></div>
+  <p id="cClass"></p>
+  <p id="cUnit"></p>
+  <div class="star" id="cStar"></div>
+  <p>🌟 Keep practising English every day!</p>
+  <div class="sign">
+    <div><b>Principal</b><br>Tran Thi Kim Yen</div>
+    <div><b>Teacher</b><br>Pham Thi Ngoc Bich</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ===== BASIC WORDS ===== */
+const basicWords=[
+"i","you","he","she","we","they","am","is","are","was","were",
+"do","does","did","will","would","like","to","be","a","an","the",
+"in","on","at","with","and","because","of","for","by","from",
+"go","goes","went","play","played","visit","visited","want",
+"have","has","had","can","could","should","this","that","these","those"
+];
+
+/* ===== 20 UNIT – CẤU TRÚC SGK ===== */
+const unitPatterns={
+1:{title:"Unit 1: All about me",required:["i","am"],keywords:["name","class","live","favourite","colour","animal","food","sport"]},
+2:{title:"Unit 2: Our homes",required:["i","live"],keywords:["house","flat","building","address","street"]},
+3:{title:"Unit 3: My foreign friends",required:["he","she","is"],keywords:["vietnamese","american","australian","friendly","helpful"]},
+4:{title:"Unit 4: Our free-time activities",required:["i","like"],keywords:["reading","walking","watering","riding","playing","weekend"]},
+5:{title:"Unit 5: My future job",required:["i","would","like","to","be","because"],keywords:["teacher","doctor","firefighter","writer","children","people"]},
+6:{title:"Unit 6: Our school rooms",required:["go","turn"],keywords:["upstairs","corridor","room","floor"]},
+7:{title:"Unit 7: School activities",required:["he","she","likes","because"],keywords:["reading","projects","games","interesting","fun"]},
+8:{title:"Unit 8: In our classroom",required:["they","are"],keywords:["on","under","beside","between","crayons","books"]},
+9:{title:"Unit 9: Outdoor activities",required:["we","were","did"],keywords:["campsite","aquarium","danced","watched"]},
+10:{title:"Unit 10: School trip",required:["they","did"],keywords:["visited","buildings","trip"]},
+11:{title:"Unit 11: Family time",required:["we","did"],keywords:["swam","took","photos","boat","trip"]},
+12:{title:"Unit 12: Our Tet holiday",required:["i","will"],keywords:["decorate","house","banh","chung"]},
+13:{title:"Unit 13: Special days",required:["we","will"],keywords:["party","pizza","burgers","juice"]},
+14:{title:"Unit 14: Staying healthy",required:["he","she","does"],keywords:["exercise","yoga","healthy"]},
+15:{title:"Unit 15: Our health",required:["i","have"],keywords:["headache","toothache","medicine","rest"]},
+16:{title:"Unit 16: Weather",required:["it","is"],keywords:["hot","cold","warm","cool","wear"]},
+17:{title:"Unit 17: Stories",required:["he","she"],keywords:["fox","crow","tortoise","hare","worked"]},
+18:{title:"Unit 18: Transport",required:["i","want","to"],keywords:["visit","bus","bike","taxi"]},
+19:{title:"Unit 19: Places of interest",required:["i","think","it","is"],keywords:["beautiful","peaceful","far","kilometres"]},
+20:{title:"Unit 20: Summer holidays",required:["i","am","going","to"],keywords:["visit","camping","swimming","island"]}
+};
+
+/* ===== LOAD UNITS ===== */
+const unitSel=document.getElementById("unit");
+for(let i=1;i<=20;i++){
+  unitSel.innerHTML+=`<option value="${i}">Unit ${i}</option>`;
+}
+unitSel.onchange=()=>unitTitle.innerText=unitPatterns[unitSel.value].title;
+unitTitle.innerText=unitPatterns[1].title;
+
+/* ===== SPEAK ===== */
+function speakWord(w){
+  let u=new SpeechSynthesisUtterance(w);
+  u.lang="en-GB";u.rate=0.75;
+  speechSynthesis.speak(u);
+}
+
+/* ===== SPEECH RECOGNITION ===== */
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+const recog=new SpeechRecognition();
+recog.lang="en-GB";
+
+function startSpeak(){recog.start();}
+
+recog.onresult=e=>{
+  let said=e.results[0][0].transcript.toLowerCase();
+  studentText.value=said;
+  checkSpeech(said);
+};
+
+/* ===== CHECK SPEECH ===== */
+function checkSpeech(said){
+  certificate.style.display="none";
+  let unitData=unitPatterns[unitSel.value];
+  let words=said.split(" ");
+  let wrong=[];
+
+  unitData.required.forEach(r=>{
+    if(!said.includes(r)) wrong.push(r);
+  });
+
+  words.forEach(w=>{
+    if(w.length>2 && !basicWords.includes(w) && !unitData.keywords.includes(w)){
+      wrong.push(w);
+    }
+  });
+
+  wrong=[...new Set(wrong)];
+  let stars=wrong.length>=6?2:wrong.length>=3?3:4;
+
+  if(wrong.length===0){
+    feedback.innerHTML="✅ Con nói đúng cấu trúc SGK. Very good!";
+  }else{
+    feedback.innerHTML=`❌ Con cần sửa:<br><br>
+    ${wrong.map(w=>`<button class="word-btn" onclick="speakWord('${w}')">🔊 ${w}</button>`).join("")}`;
+  }
+
+  saveProgress(stars);
+  showProgress();
+  showCert(stars,unitData.title);
+}
+
+/* ===== PROGRESS TRACKING ===== */
+function saveProgress(stars){
+  let key=studentName.value+"-"+studentClass.value;
+  if(!key.trim()) return;
+
+  let data=JSON.parse(localStorage.getItem(key))||{times:0,total:0};
+  data.times++;
+  data.total+=stars;
+  localStorage.setItem(key,JSON.stringify(data));
+}
+
+function showProgress(){
+  let key=studentName.value+"-"+studentClass.value;
+  let data=JSON.parse(localStorage.getItem(key));
+  if(!data){progress.innerText="No data yet.";return;}
+  progress.innerHTML=`
+  Attempts: ${data.times}<br>
+  Average stars: ${(data.total/data.times).toFixed(1)} ⭐
+  `;
+}
+
+/* ===== CERT ===== */
+function showCert(star,title){
+  certificate.style.display="block";
+  cName.innerText=studentName.value;
+  cClass.innerText="Class: "+studentClass.value;
+  cUnit.innerText=title;
+  cStar.innerText="⭐".repeat(star);
+}
+</script>
+</body>
+</html>
